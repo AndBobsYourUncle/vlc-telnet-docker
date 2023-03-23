@@ -18,14 +18,19 @@ echo "defaults.ctl.card $SOUND_CARD_NUMBER" >> /etc/asound.conf
 # Set volume level in percents
 amixer set "$VOLUME_CHANNEL" "$VOLUME_LEVEL_PERCENT"%
 
-#--- we add a function to exit nicely (perhaps kill a few processes and remove some temp files)
-function exit_container_SIGTERM(){
-  echo "Caught SIGTERM"
-  exit 0
+#!/bin/bash
+
+signalListener() {
+    "$@" &
+    pid="$!"
+    trap "echo 'Stopping PID $pid'; kill -SIGTERM $pid" SIGINT SIGTERM
+
+    # A signal emitted while waiting will make the wait command return code > 128
+    # Let's wrap it in a loop that doesn't end before the process is indeed stopped
+    while kill -0 $pid > /dev/null 2>&1; do
+        wait
+    done
 }
 
-#--- trap the SIGTERM signal
-trap exit_container_SIGTERM SIGTERM
-
 # Run VLC with telnet interface as a non-root "vlcuser" user
-vlc -I telnet --no-dbus --aout=Alsa --telnet-password $TELNET_PASSWORD
+signalListener su -c "vlc -I telnet --no-dbus --aout=Alsa --telnet-password $TELNET_PASSWORD" vlcuser
