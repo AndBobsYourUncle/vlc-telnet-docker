@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Assert env variable
 if [ -z "$TELNET_PASSWORD" ]; then
@@ -18,5 +18,17 @@ echo "defaults.ctl.card $SOUND_CARD_NUMBER" >> /etc/asound.conf
 # Set volume level in percents
 amixer set "$VOLUME_CHANNEL" "$VOLUME_LEVEL_PERCENT"%
 
+signalListener() {
+    "$@" &
+    pid="$!"
+    trap "echo 'Stopping PID $pid'; kill -SIGTERM $pid" SIGINT SIGTERM
+
+    # A signal emitted while waiting will make the wait command return code > 128
+    # Let's wrap it in a loop that doesn't end before the process is indeed stopped
+    while kill -0 $pid > /dev/null 2>&1; do
+        wait
+    done
+}
+
 # Run VLC with telnet interface as a non-root "vlcuser" user
-su -c "vlc -I telnet --no-dbus --aout=Alsa --telnet-password $TELNET_PASSWORD" vlcuser
+signalListener su -c "vlc -I telnet --no-dbus --aout=Alsa --telnet-password $TELNET_PASSWORD" vlcuser
