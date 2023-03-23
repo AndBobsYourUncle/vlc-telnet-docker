@@ -15,4 +15,4 @@ EXPOSE 4212
 
 WORKDIR /home/vlcuser/
 
-ENTRYPOINT ["/bin/bash", "-c", "/home/vlcuser/startup.sh"]
+ENTRYPOINT ["sh", "/home/vlcuser/startup.sh"]
