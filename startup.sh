@@ -28,4 +28,4 @@ function exit_container_SIGTERM(){
 trap exit_container_SIGTERM SIGTERM
 
 # Run VLC with telnet interface as a non-root "vlcuser" user
-su -c "vlc -I telnet --no-dbus --aout=Alsa --telnet-password $TELNET_PASSWORD" vlcuser
+vlc -I telnet --no-dbus --aout=Alsa --telnet-password $TELNET_PASSWORD

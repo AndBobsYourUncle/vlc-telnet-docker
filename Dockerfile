@@ -15,4 +15,6 @@ EXPOSE 4212
 
 WORKDIR /home/vlcuser/
 
+USER vlcuser
+
 ENTRYPOINT ["/bin/bash", "-c", "/home/vlcuser/startup.sh"]
