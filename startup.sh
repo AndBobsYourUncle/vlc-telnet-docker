@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Assert env variable
 if [ -z "$TELNET_PASSWORD" ]; then
