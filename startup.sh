@@ -18,5 +18,14 @@ echo "defaults.ctl.card $SOUND_CARD_NUMBER" >> /etc/asound.conf
 # Set volume level in percents
 amixer set "$VOLUME_CHANNEL" "$VOLUME_LEVEL_PERCENT"%
 
+#--- we add a function to exit nicely (perhaps kill a few processes and remove some temp files)
+function exit_container_SIGTERM(){
+  echo "Caught SIGTERM"
+  exit 0
+}
+
+#--- trap the SIGTERM signal
+trap exit_container_SIGTERM SIGTERM
+
 # Run VLC with telnet interface as a non-root "vlcuser" user
 su -c "vlc -I telnet --no-dbus --aout=Alsa --telnet-password $TELNET_PASSWORD" vlcuser
