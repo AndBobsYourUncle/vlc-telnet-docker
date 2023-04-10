@@ -31,4 +31,4 @@ signalListener() {
 }
 
 # Run VLC with telnet interface as a non-root "vlcuser" user
-signalListener su -c "vlc -I telnet --no-dbus --aout=Alsa --telnet-password $TELNET_PASSWORD" vlcuser
+signalListener su -c "vlc -I telnet --no-dbus --aout=Alsa --telnet-password $TELNET_PASSWORD --extraintf=http --http-password $TELNET_PASSWORD --http-host 0.0.0.0 --http-port 8012" vlcuser
